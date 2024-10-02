@@ -1,0 +1,84 @@
+title: Efficient Scientific Computing 2024
+menu_header: ESC24
+url: https://infn-esc.github.io
+baseurl: /esc24
+github: https://github.com/infn-esc/esc24
+indico: https://agenda.infn.it/event/40488
+
+menu:
+  - name: basic
+    items:
+    - name: environment
+    - name: compiling
+  - name: architecture
+    items:
+    - name: discoverHW
+      label: Discover Hardware Architecture
+    - name: perf
+      label: Profiling using "perf"
+  - name: cpp
+    label: C++
+    items:
+    - name: algorithms
+    - name: issues
+    - name: pointers
+      label: Managing resources
+    - name: move_ops
+      label: Move operations
+    - name: rvo
+      label: Return Value Optimization
+    - name: containers
+    - name: compiletime
+      label: Compile-time computation
+  - name: floatingpoints
+    label: FLOATING POINT
+    items:
+    - name: fprep
+      label: Floating-Point Representation
+    - name: fpcommutative
+      label: Commutative sum
+    - name: fpquadratic
+      label: Quadratic Equation
+    - name: fppi
+      label: Pi approximation error
+    - name: fpsafemath
+      label: Floating-Point Optimizations
+  - name: vectorization
+    items:
+    - name: pi
+      label: Vectorize computation of pi
+  - name: parallelism
+    items:
+    - name: auto_vectorization
+      label: Automatic vectorization
+    - name: stdthreads_tbb
+      label: threads and tbb
+    - name: cuda
+    - name: mpi
+  - name: memory
+    label: Memory Management 
+    items:
+    - name: basics 
+    - name: datastructure 
+      label: Data structures 
+    - name: allocator
+
+# Exclude from processing.
+# The following items will not be processed, by default.
+# Any item listed under the `exclude:` key here will be automatically added to
+# the internal "default list".
+#
+# Excluded items can be processed by explicitly listing the directories or
+# their entries' file path in the `include:` list.
+#
+# exclude:
+#   - .sass-cache/
+#   - .jekyll-cache/
+#   - gemfiles/
+#   - Gemfile
+#   - Gemfile.lock
+#   - node_modules/
+#   - vendor/bundle/
+#   - vendor/cache/
+#   - vendor/gems/
+#   - vendor/ruby/
