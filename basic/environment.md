@@ -143,7 +143,7 @@ Please note that:
 All the school hands-on material is included in a git repository. Get it using:
 
 ```shell
-[studentN@hpc-201-11-40 ~]$ git clone https://github.com/infn-esc/esc23.git
+[studentN@hpc-201-11-40 ~]$ git clone {{ site.github.clone_url }}
 ```
 
 The repository contains also these pages.

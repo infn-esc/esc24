@@ -1,0 +1,1 @@
+{{ site.github.repository_url | append: "/blob/main/hands-on" }}

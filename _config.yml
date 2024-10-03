@@ -1,9 +1,14 @@
 title: Efficient Scientific Computing 2024
 menu_header: ESC24
-url: https://infn-esc.github.io
-baseurl: /esc24
-github: https://github.com/infn-esc/esc24
+# url: https://infn-esc.github.io
+# baseurl: /esc24
 indico: https://agenda.infn.it/event/40488
+# github:
+#   repository_url: "https://github.com/infn-esc/esc24"
+#   repository_name: "esc24"
+
+plugins:
+  - "jekyll-github-metadata"
 
 menu:
   - name: basic

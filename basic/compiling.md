@@ -8,7 +8,7 @@ The goal of this exercise is to understand how to compile and run test programs
 on `esc`. Let's do it with `g++ v. 12.3`, which by default compiles in C++17
 mode. It's also good practice to enable a high level of warnings.
 
-Build [pi_time.cpp]({{ site.github }}/blob/main/hands-on/basic/pi_time.cpp):
+Build [pi_time.cpp]({{ site.github.repository_url }}/blob/main/hands-on/basic/pi_time.cpp):
 
 ```shell
 [studentN@hpc-201-11-40 ~]$ cd esc/hands-on/basic

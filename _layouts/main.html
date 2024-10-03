@@ -6,27 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{ site.baseurl }}/css/side-menu.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ site.baseurl }}/css/side-menu.css">
     <link rel="stylesheet" href="{{ site.baseurl }}/css/style.css">
+    <style>
+      .custom-restricted-width {
+          /* To limit the menu width to the content of the menu: */
+          display: inline-block;
+          /* Or set the width explicitly: */
+          /* width: 10em; */
+      }
+  </style>
 </head>
 <body>
+
 <div id="layout">
   <a href="#menu" id="menuLink" class="menu-link">
     <!-- Hamburger icon -->
   <span></span>
   </a>
   <div id="menu">
-    <div class="pure-menu">
+    <div class="pure-menu custom-restricted-width">
       <a class="pure-menu-heading pure-menu-link" href="{{ site.baseurl }}/">{{ site.menu_header }}</a>
       <ul class="pure-menu-list">
       {% for cat in site.menu %}
         <li class="pure-menu-item menu-item-divided">
-          <a href="{{ site.baseurl }}/{{ cat.name }}" class="pure-menu-link">{% if cat.label %}{{ cat.label }}{% else %}{{ cat.name | upcase }}{% endif %}</a>
+          {% assign CAT = cat.name | upcase %}
+          <a href="{{ site.baseurl }}/{{ cat.name }}" class="pure-menu-link">{{ cat.label | default: CAT }}</a>
         </li>
         {% for item in cat.items %}
-        <li>
-            <a href="{{ site.baseurl }}/{{ cat.name }}/{{ item.name }}.html" class="pure-menu-link">{% if item.label %}{{ item.label }}{% else %}{{ item.name | capitalize }}{% endif %}</a>
+        <li class="pure-menu-item">
+            {% assign Item = item.name | capitalize %}
+            <a href="{{ site.baseurl }}/{{ cat.name }}/{{ item.name }}.html" class="pure-menu-link">{{ item.label | default: Item }}</a>
         </li>
         {% endfor %}
       {% endfor %}
@@ -43,6 +54,6 @@
     </div>
   </div>
 </div>
-<!-- <script src="{{ site.baseurl }}/js/ui.js"></script> -->
+<script src="{{ site.baseurl }}/js/ui.js"></script>
 </body>
 </html>
