@@ -1,7 +1,7 @@
 ---
 title: School exercise environment
 layout: main
-category: basic
+section: basic
 ---
 
 The goal of this step is for you to get familiar with the ESC working

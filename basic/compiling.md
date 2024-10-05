@@ -1,7 +1,7 @@
 ---
 title: How to compile
 layout: main
-category: basic
+section: basic
 ---
 
 The goal of this exercise is to understand how to compile and run test programs
