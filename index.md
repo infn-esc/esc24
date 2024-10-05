@@ -2,7 +2,6 @@
 title: Efficient Scientific Computing 2024
 subtitle: Teaching material and exercises
 layout: main
-category: basic
 ---
 
 <!-- https://dzone.com/articles/how-to-style-images-with-markdown -->
@@ -15,7 +14,7 @@ The presentations used for the lectures are attached to the
 archive file]({{ site.indico }}/attachments/package), but wait
 until the end of the week.
 
-```c++
+<!-- ```c++
 class S {
     int i;
   public:
@@ -30,7 +29,7 @@ int main(int argc, char* argv)
 
 ```json
 {{ site.github }}
-```
+``` -->
 
 [bertinoro]: {{ site.baseurl }}/bertinoro.jpg
 [gh-pages]: https://pages.github.com/
