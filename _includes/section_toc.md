@@ -1,4 +1,4 @@
-[Exercise material for this section]({{ site.github.repository_url }}/blob/main/hands-on/{{ page.section }}).
+[Exercise material for this section]({% include hands_on_base.md %}/{{ page.section }}).
 
 {% for cat in site.menu %}
   {% if cat.name == page.section %}
