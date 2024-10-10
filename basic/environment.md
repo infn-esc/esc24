@@ -31,7 +31,7 @@ you should have received your personal credentials.
 
 You have been assigned a personal account to access computing resources hosted
 at INFN-CNAF. The username has the form `studentN`, where `N` is a number
-between 104 and 120. You should have received a mail from _sysop@cnaf.infn.it_
+between 133 and 159. You should have received a mail from _sysop@cnaf.infn.it_
 with subject _Account at CNAF_, including the credentials and the instructions
 to log on the CNAF gateway host. If you haven't received the mail, check in your
 SPAM folder. In the following, when you see `studentN`, replace it with your
