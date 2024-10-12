@@ -11,27 +11,27 @@ menu:
   - name: basic
     items:
     - name: environment
-  #   - name: compiling
+    - name: compiling
   # - name: architecture
   #   items:
   #   - name: discoverHW
   #     label: Discover Hardware Architecture
   #   - name: perf
   #     label: Profiling using "perf"
-  # - name: cpp
-  #   label: C++
-  #   items:
-  #   - name: algorithms
-  #   - name: issues
-  #   - name: pointers
-  #     label: Managing resources
-  #   - name: move_ops
-  #     label: Move operations
-  #   - name: rvo
-  #     label: Return Value Optimization
-  #   - name: containers
-  #   - name: compiletime
-  #     label: Compile-time computation
+  - name: cpp
+    label: C++
+    items:
+    - name: algorithms
+    # - name: issues
+    - name: pointers
+      label: Managing resources
+    # - name: move_ops
+    #   label: Move operations
+    # - name: rvo
+    #   label: Return Value Optimization
+    - name: containers
+    - name: compiletime
+      label: Compile-time computation
   # - name: floatingpoints
   #   label: FLOATING POINT
   #   items:
