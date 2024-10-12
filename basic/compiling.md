@@ -24,4 +24,4 @@ Compile the code with different optimization levels (`-O0` to `-O3` and
 
 Look at the code and see how `std::chrono` is used to do some basic time
 measurements, thanks to its
-[`high_resolution_clock`](https://en.cppreference.com/w/cpp/chrono/high_resolution_clock).
+[`steady_clock`](https://en.cppreference.com/w/cpp/chrono/steady_clock).
