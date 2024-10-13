@@ -64,6 +64,24 @@ on parallel programming.
 
 ## Exercise 3
 
+`std::default_random_engine` usually is an alias for a [_linear congruential_
+generator](https://en.wikipedia.org/wiki/Linear_congruential_generator). Let's
+consider _minstd_rand0_, which produces a sequence according to
+
+$$
+x_{n+1} = 16807 x_n \mod (2^{31} - 1)
+$$
+
+Write a class `LinearCongruential` whose constructor initializes the sequence
+with a seed (with a default value of 1) and an `operator()` that updates the
+internal value (the $x_n$) and returns it. The type of the numbers involved in
+the computations is `unsigned long int`.
+
+Print a few numbers and check that they correspond to what is produced by
+`std::default_random_engine`.
+
+## Exercise 4
+
 Modify the program [`algo_functions.cpp`]({% include hands_on_base.md %}/{{
 page.section }}/algo_functions.cpp) to:
 
