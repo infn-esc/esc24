@@ -31,13 +31,6 @@ int main()
             << 1. * std::accumulate(mid_it, std::end(v), 0) / std::distance(mid_it, std::end(v))
             << '\n';
 
-  // move the three central elements to the beginning of the vector
-  assert(v.size() >= 3);
-  auto n_first = std::prev(mid_it);
-  auto last = std::next(mid_it, 2);
-  std::rotate(std::begin(v), n_first, last);
-  std::cout << "rotated: " << v << '\n';
-
   // remove duplicate elements
   // first sort the vector
   std::sort(std::begin(v), std::end(v));
@@ -45,6 +38,13 @@ int main()
   std::vector<int> unique_v;
   std::unique_copy(std::begin(v), std::end(v), std::back_inserter(unique_v));
   std::cout << "unique: " << unique_v << '\n';
+
+  // move the three central elements to the beginning of the vector
+  assert(v.size() >= 3);
+  auto n_first = std::prev(mid_it);
+  auto last = std::next(mid_it, 2);
+  std::rotate(std::begin(v), n_first, last);
+  std::cout << "rotated: " << v << '\n';
 }
 
 std::ostream& operator<<(std::ostream& os, std::vector<int> const& c)

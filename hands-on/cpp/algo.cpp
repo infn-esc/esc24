@@ -20,11 +20,11 @@ int main()
 
   // compute the average of the first half and of the second half of the vector
 
-  // move the three central elements to the beginning of the vector
-  // use std::rotate
-
   // remove duplicate elements
   // use std::sort followed by std::unique/unique_copy
+
+  // move the three central elements to the beginning of the vector
+  // use std::rotate
 }
 
 std::ostream& operator<<(std::ostream& os, std::vector<int> const& c)
