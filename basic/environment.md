@@ -166,31 +166,16 @@ the `module load` in the shell initialization file.
 [studentN@hpc-201-11-40 ~]$ echo 'module load compilers/gcc-12.3_sl7' >> ${HOME}/.bashrc
 ```
 
-## Install CMake
-
-Download and install the latest version of [CMake](https://cmake.org/):
-```shell
-[studentN@hpc-201-11-40 ~]$ wget https://github.com/Kitware/CMake/releases/download/v3.30.5/cmake-3.30.5-linux-x86_64.tar.gz
-[studentN@hpc-201-11-40 ~]$ sha256sum cmake-3.30.5-linux-x86_64.tar.gz
-f747d9b23e1a252a8beafb4ed2bc2ddf78cff7f04a8e4de19f4ff88e9b51dc9d  cmake-3.30.5-linux-x86_64.tar.gz
-
-[studentN@hpc-201-11-40 ~]$ tar xaf cmake-3.30.5-linux-x86_64.tar.gz
-[studentN@hpc-201-11-40 ~]$ ln -s cmake-3.30.5-linux-x86_64 cmake
-[studentN@hpc-201-11-40 ~]$ export PATH=$HOME/cmake/bin:$PATH
-```
-
-To execute the last command automatically every time you log in, add it to the end of your `.bashrc` file:
-```shell
-[studentN@hpc-201-11-40 ~]$ echo 'export PATH=${HOME}/cmake/bin:$PATH' >> ${HOME}/.bashrc
-```
-
 ## Install and test Google benchmark
+
+Building and installing Google benchmark requires the cmake module; however it is not necessary to enable cmake after Google benchmark has been installed.
 
 Download, build and install Google benchmark from the sources:
 ```shell
 [studentN@hpc-201-11-40 ]$ git clone https://github.com/google/benchmark.git
 [studentN@hpc-201-11-40 ]$ mkdir benchmark/build
 [studentN@hpc-201-11-40 ]$ cd benchmark/build
+[studentN@hpc-201-11-40 ]$ module load compilers/cmake-3.27.7
 [studentN@hpc-201-11-40 ]$ cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME}/benchmark ..
 [studentN@hpc-201-11-40 ]$ make -j8 install
 [studentN@hpc-201-11-40 ]$ cd
