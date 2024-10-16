@@ -166,22 +166,110 @@ the `module load` in the shell initialization file.
 [studentN@hpc-201-11-40 ~]$ echo 'module load compilers/gcc-12.3_sl7' >> ${HOME}/.bashrc
 ```
 
-## Install oneAPI Threading Building Blocks
+## Install CMake
 
-Let's install the latest release of oneAPI TBB.
-
+Download and install the latest version of [CMake](https://cmake.org/):
 ```shell
-[studentN@hpc-201-11-40 ~]$ wget https://github.com/oneapi-src/oneTBB/releases/download/v2021.10.0/oneapi-tbb-2021.10.0-lin.tgz
-[studentN@hpc-201-11-40 ~]$ sha256sum oneapi-tbb-2021.10.0-lin.tgz
-d5be4164a1f2e67a8c7bc927cbe2b36690815adb48d36e50b9e3b8afa4c99310  oneapi-tbb-2021.10.0-lin.tgz
-[studentN@hpc-201-11-40 ~]$ tar zxf oneapi-tbb-2021.10.0-lin.tgz
+[studentN@hpc-201-11-40 ~]$ wget https://github.com/Kitware/CMake/releases/download/v3.30.5/cmake-3.30.5-linux-x86_64.tar.gz
+[studentN@hpc-201-11-40 ~]$ sha256sum cmake-3.30.5-linux-x86_64.tar.gz
+f747d9b23e1a252a8beafb4ed2bc2ddf78cff7f04a8e4de19f4ff88e9b51dc9d  cmake-3.30.5-linux-x86_64.tar.gz
+
+[studentN@hpc-201-11-40 ~]$ tar xaf cmake-3.30.5-linux-x86_64.tar.gz
+[studentN@hpc-201-11-40 ~]$ ln -s cmake-3.30.5-linux-x86_64 cmake
+[studentN@hpc-201-11-40 ~]$ export PATH=$HOME/cmake/bin:$PATH
 ```
 
-Before working on the exercises that require oneAPI TBB, remember to enable it:
-
+To execute the last command automatically every time you log in, add it to the end of your `.bashrc` file:
 ```shell
-[studentN@hpc-201-11-40 ~]$ export TBBROOT=${HOME}/oneapi-tbb-2021.10.0
-[studentN@hpc-201-11-40 ~]$ source ${TBBROOT}/env/vars.sh intel64 linux auto_tbbroot
+[studentN@hpc-201-11-40 ~]$ echo 'export PATH=${HOME}/cmake/bin:$PATH' >> ${HOME}/.bashrc
+```
+
+## Install and test Google benchmark
+
+Download, build and install Google benchmark from the sources:
+```shell
+[studentN@hpc-201-11-40 ]$ git clone https://github.com/google/benchmark.git
+[studentN@hpc-201-11-40 ]$ mkdir benchmark/build
+[studentN@hpc-201-11-40 ]$ cd benchmark/build
+[studentN@hpc-201-11-40 ]$ cmake -DBENCHMARK_DOWNLOAD_DEPENDENCIES=on -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME}/benchmark ..
+[studentN@hpc-201-11-40 ]$ make -j8 install
+[studentN@hpc-201-11-40 ]$ cd
+[studentN@hpc-201-11-40 ]$ export BENCHMARKROOT=${HOME}/benchmark
+[studentN@hpc-201-11-40 ]$ export CPATH=${CPATH}:${BENCHMARKROOT}/include
+[studentN@hpc-201-11-40 ]$ export LIBRARY_PATH=${LIBRARY_PATH}:${BENCHMARKROOT}/lib64
+```
+
+To execute the last commands automatically every time you log in, add them at the end of your `.bashrc` file:
+```shell
+[studentN@hpc-201-11-40 ~]$ cat >> ${HOME}/.bashrc << "@EOF"
+export BENCHMARKROOT=${HOME}/benchmark
+export CPATH=${CPATH}:${BENCHMARKROOT}/include
+export LIBRARY_PATH=${LIBRARY_PATH}:${BENCHMARKROOT}/lib64
+@EOF
+```
+
+To test that Google benchmark is correctly installed we can use a [simple test program](https://github.com/google/benchmark?tab=readme-ov-file#basic-usage):
+```c++
+#include <benchmark/benchmark.h>
+
+static void BM_StringCreation(benchmark::State& state) {
+  for (auto _ : state)
+    std::string empty_string;
+}
+// Register the function as a benchmark
+BENCHMARK(BM_StringCreation);
+
+// Define another benchmark
+static void BM_StringCopy(benchmark::State& state) {
+  std::string x = "hello";
+  for (auto _ : state)
+    std::string copy(x);
+}
+BENCHMARK(BM_StringCopy);
+
+BENCHMARK_MAIN();
+```
+
+Save this program as `benchtest.cc`, compile it, and run it with
+```shell
+[studentN@hpc-201-11-40 ~]$ g++ -std=c++17 -O2 benchtest.cc -lbenchmark -pthread -o benchtest
+[studentN@hpc-201-11-40 ~]$ ./benchtest
+```
+You should see an output similar to
+```
+2024-10-16T14:09:28+02:00
+Running ./benchtest
+Run on (80 X 3700 MHz CPU s)
+CPU Caches:
+  L1 Data 32 KiB (x40)
+  L1 Instruction 32 KiB (x40)
+  L2 Unified 1024 KiB (x40)
+  L3 Unified 28160 KiB (x2)
+Load Average: 1.54, 1.31, 0.78
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+------------------------------------------------------------
+Benchmark                  Time             CPU   Iterations
+------------------------------------------------------------
+BM_StringCreation      0.000 ns        0.000 ns   1000000000000
+BM_StringCopy           7.56 ns         7.56 ns     70446029
+```
+
+## Install oneAPI Threading Building Blocks
+
+Download and install the latest release of oneAPI TBB:
+```shell
+[studentN@hpc-201-11-40 ~]$ wget https://github.com/oneapi-src/oneTBB/releases/download/v2021.13.0/oneapi-tbb-2021.13.0-lin.tgz
+[studentN@hpc-201-11-40 ~]$ sha256sum oneapi-tbb-2021.13.0-lin.tgz
+f5c9304710051f0193a07fb91b6d6ada5a3e0a6d623951ee176b1897816ecf4c  oneapi-tbb-2021.13.0-lin.tgz
+
+[studentN@hpc-201-11-40 ~]$ tar xaf oneapi-tbb-2021.13.0-lin.tgz
+[studentN@hpc-201-11-40 ~]$ ln -s oneapi-tbb-2021.13.0 tbb
+[studentN@hpc-201-11-40 ~]$ source ${HOME}/tbb/env/vars.sh
+```
+
+To execute the last command automatically every time you log in, add it to the end of your `.bashrc` file:
+```shell
+[studentN@hpc-201-11-40 ~]$ echo 'source ${HOME}/tbb/env/vars.sh' >> ${HOME}/.bashrc
 ```
 
 ## Editing source code
