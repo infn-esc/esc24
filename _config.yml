@@ -57,13 +57,17 @@ menu:
   #     label: threads and tbb
   #   - name: cuda
   #   - name: mpi
-  # - name: memory
-  #   label: Memory Management
-  #   items:
-  #   - name: basics
-  #   - name: datastructure
-  #     label: Data structures
-  #   - name: allocator
+  - name: memory
+    label: Memory Management
+    items:
+    - name: basics
+    - name: fs
+      label: False Sharing 
+    - name: datastructure
+      label: Data structures
+    - name: allocator
+    - name: asan
+      label: Address Sanitizer
 
 # Exclude from processing.
 # The following items will not be processed, by default.

@@ -8,7 +8,7 @@ The goal of this exercise is to get some confidence with move
 semantics, in particular to implement the move operations of a class:
 the move constructor and the move assignment.
 
-Open the test program [`string.cpp`]({% include hands_on_base %}/{{ page.section }}/string.cpp) and complete the existing code to:
+Open the test program [`string.cpp`]({% include hands_on_base.md %}/{{ page.section }}/string.cpp) and complete the existing code to:
 
 * Complete the set of the special member functions so that String is copyable and movable
   
