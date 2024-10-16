@@ -23,8 +23,8 @@ menu:
     items:
     - name: algorithms
     # - name: issues
-    # - name: move_ops
-    #   label: Move operations
+    - name: move_ops
+      label: Move operations
     # - name: rvo
     #   label: Return Value Optimization
     - name: containers
