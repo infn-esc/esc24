@@ -14,7 +14,7 @@ CC          = gcc
 
 # These definitions should work on any system
 CLINKER     = $(CC)
-OPTFLAGS    = -std=c11 -fopenmp -O3 -DAPPLE
+OPTFLAGS    = -std=c11 -fopenmp -O3 
 LIBS        = -lm
 PRE         = ./
 
