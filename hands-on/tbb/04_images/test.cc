@@ -1,6 +1,7 @@
-#include <chrono>
 #include <cassert>
+#include <chrono>
 #include <cstdint>
+#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
@@ -191,6 +192,7 @@ struct Image {
 
 };
 
+bool verbose = false;
 
 // make a scaled copy of an image
 Image scale(Image const& src, int width, int height) {
@@ -252,7 +254,9 @@ Image scale(Image const& src, int width, int height) {
 
   auto finish = std::chrono::steady_clock::now();
   float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
-  std::cerr << fmt::format("scale:      {:6.2f}", ms) << " ms\n";
+  if (verbose) {
+    std::cerr << fmt::format("scale:      {:6.2f}", ms) << " ms\n";
+  }
 
   return out;
 }
@@ -295,7 +299,9 @@ void write_to(Image const& src, Image& dst, int x, int y) {
 
   auto finish = std::chrono::steady_clock::now();
   float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
-  std::cerr << fmt::format("write_to:   {:6.2f}", ms) << " ms\n";
+  if (verbose) {
+    std::cerr << fmt::format("write_to:   {:6.2f}", ms) << " ms\n";
+  }
 }
 
 
@@ -323,7 +329,9 @@ Image grayscale(Image const& src) {
 
   auto finish = std::chrono::steady_clock::now();
   float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
-  std::cerr << fmt::format("grayscale:  {:6.2f}", ms) << " ms\n";
+  if (verbose) {
+    std::cerr << fmt::format("grayscale:  {:6.2f}", ms) << " ms\n";
+  }
 
   return dst;
 }
@@ -350,12 +358,19 @@ Image tint(Image const& src, int r, int g, int b) {
 
   auto finish = std::chrono::steady_clock::now();
   float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
-  std::cerr << fmt::format("tint:       {:6.2f}", ms) << " ms\n";
+  if (verbose) {
+    std::cerr << fmt::format("tint:       {:6.2f}", ms) << " ms\n";
+  }
 
   return dst;
 }
 
 int main(int argc, const char* argv[]) {
+    const char* verbose_env = std::getenv("VERBOSE");
+    if (verbose_env != nullptr and std::strlen(verbose_env) != 0) {
+      verbose = true;
+    }
+
     std::vector<std::string> files;
     if (argc == 1) {
       // no arguments, use a single default image
