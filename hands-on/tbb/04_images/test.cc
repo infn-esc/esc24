@@ -6,6 +6,11 @@
 #include <stdexcept>
 #include <vector>
 
+#ifdef __linux__
+#include <sys/ioctl.h>
+#include <unistd.h>
+#endif
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -146,12 +151,16 @@ struct Image {
       return;
     }
 
+    // two blocks per line
+    max_height = max_height * 2;
+
+    // find the best size given the max width and height and the image aspect ratio
     int width, height;
-    if (width_ > height_) {
+    if (width_ * max_height > height_ * max_width) {
       width = max_width;
-      height = max_height * height_ / width_;
+      height = max_width * height_ / width_;
     } else {
-      width = max_width * width_ / height_;
+      width = max_height * width_ / height_;
       height = max_height;
     }
 
@@ -334,12 +343,25 @@ int main(int argc, const char* argv[]) {
       }
     }
 
+    int rows = 80;
+    int columns = 80;
+#if defined(__linux__) && defined(TIOCGWINSZ)
+    {
+      struct winsize w;
+      ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+      if (w.ws_row > 1 and w.ws_col > 1) {
+        rows = w.ws_row - 1;
+        columns = w.ws_col - 1;
+      }
+    }
+#endif
+
     std::vector<Image> images;
     images.resize(files.size());
     for (unsigned int i = 0; i < files.size(); ++i) {
       auto& img = images[i];
       img.open(files[i]);
-      img.show(80, 80);
+      img.show(columns, rows);
 
       Image small = scale(img, img.width_ * 0.5, img.height_ * 0.5);
       Image gray = grayscale(small);
@@ -354,7 +376,7 @@ int main(int argc, const char* argv[]) {
       write_to(gray, out, img.width_ * 0.5, img.height_ * 0.5);
 
       std::cout << '\n';
-      out.show(80, 80);
+      out.show(columns, rows);
       out.write(fmt::format("out{:02d}.jpg", i));
     }
 
