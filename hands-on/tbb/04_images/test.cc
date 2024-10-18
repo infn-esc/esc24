@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cassert>
 #include <cstdint>
 #include <iomanip>
 #include <iostream>
@@ -123,7 +124,7 @@ struct Image {
         throw std::runtime_error("Error while writing PNG file "s + filename);
       }
     } else if (filename.ends_with(".jpg") or filename.ends_with(".jpeg")) {
-      int status = stbi_write_jpg(filename.c_str(), width_, height_, channels_, data_, 99);
+      int status = stbi_write_jpg(filename.c_str(), width_, height_, channels_, data_, 95);
       if (status == 0) {
         throw std::runtime_error("Error while writing JPEG file "s + filename);
       }
