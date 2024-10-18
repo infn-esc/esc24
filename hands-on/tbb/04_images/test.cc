@@ -385,7 +385,7 @@ int main(int argc, const char* argv[]) {
     int rows = 80;
     int columns = 80;
 #if defined(__linux__) && defined(TIOCGWINSZ)
-    {
+    if (isatty(STDOUT_FILENO)) {
       struct winsize w;
       ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
       if (w.ws_row > 1 and w.ws_col > 1) {
