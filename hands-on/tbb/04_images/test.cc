@@ -202,6 +202,8 @@ Image scale(Image const& src, int width, int height) {
   // create a new image
   Image out(width, height, src.channels_);
 
+  auto start = std::chrono::steady_clock::now();
+
   for (int y = 0; y < height; ++y) {
     // map the row of the scaled image to the nearest rows of the original image
     float yp = static_cast<float>(y) * src.height_ / height;
@@ -248,6 +250,10 @@ Image scale(Image const& src, int width, int height) {
     }
   }
 
+  auto finish = std::chrono::steady_clock::now();
+  float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
+  std::cerr << fmt::format("scale:      {:6.2f}", ms) << " ms\n";
+
   return out;
 }
 
@@ -279,11 +285,17 @@ void write_to(Image const& src, Image& dst, int x, int y) {
   //int dst_y_to   = std::min(src.height_ + y, dst.height_);
   int y_height = src_y_to - src_y_from;
 
+  auto start = std::chrono::steady_clock::now();
+
   for (int y = 0; y < y_height; ++y) {
     int src_p = ((src_y_from + y) * src.width_ + src_x_from) * src.channels_;
     int dst_p = ((dst_y_from + y) * dst.width_ + dst_x_from) * dst.channels_;
     std::memcpy(dst.data_ + dst_p, src.data_ + src_p, x_width * src.channels_);
   }
+
+  auto finish = std::chrono::steady_clock::now();
+  float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
+  std::cerr << fmt::format("write_to:   {:6.2f}", ms) << " ms\n";
 }
 
 
@@ -291,6 +303,8 @@ void write_to(Image const& src, Image& dst, int x, int y) {
 Image grayscale(Image const& src) {
   // non-RGB images are not supported
   assert(src.channels_ >= 3);
+
+  auto start = std::chrono::steady_clock::now();
 
   Image dst = src;
   for (int y = 0; y < dst.height_; ++y) {
@@ -307,6 +321,10 @@ Image grayscale(Image const& src) {
     }
   }
 
+  auto finish = std::chrono::steady_clock::now();
+  float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
+  std::cerr << fmt::format("grayscale:  {:6.2f}", ms) << " ms\n";
+
   return dst;
 }
 
@@ -314,6 +332,8 @@ Image grayscale(Image const& src) {
 Image tint(Image const& src, int r, int g, int b) {
   // non-RGB images are not supported
   assert(src.channels_ >= 3);
+
+  auto start = std::chrono::steady_clock::now();
 
   Image dst = src;
   for (int y = 0; y < dst.height_; ++y) {
@@ -327,6 +347,10 @@ Image tint(Image const& src, int r, int g, int b) {
       dst.data_[p+2] = b0 * b / 255;
     }
   }
+
+  auto finish = std::chrono::steady_clock::now();
+  float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
+  std::cerr << fmt::format("tint:       {:6.2f}", ms) << " ms\n";
 
   return dst;
 }
