@@ -392,68 +392,70 @@ int main(int argc, const char* argv[]) {
   std::atomic<int> counter = 0;
 
   // create a TBB flow graph
-  tbb::flow::graph g;
+  tbb::flow::graph graph;
 
   // create the graph nodes
-  tbb::flow::function_node<std::string, std::shared_ptr<Image>> node_open(
-      g, tbb::flow::unlimited, [](std::string filename) -> std::shared_ptr<Image> {
-        return std::make_shared<Image>(filename);
-      });
+  using ImagePtr = std::shared_ptr<Image>;
+  using ImageCmb = std::tuple<ImagePtr, ImagePtr, ImagePtr, ImagePtr>;
 
-  tbb::flow::function_node<std::shared_ptr<Image>, tbb::flow::continue_msg> node_show(
-      g, tbb::flow::unlimited, [rows, columns](std::shared_ptr<Image> img) { img->show(columns, rows); });
+  tbb::flow::function_node<std::string, ImagePtr> node_open(  // read the image from a file
+      graph,
+      tbb::flow::unlimited,
+      [](std::string filename) -> ImagePtr { return std::make_shared<Image>(filename); });
 
-  tbb::flow::function_node<std::shared_ptr<Image>, std::shared_ptr<Image>> node_scale(
-      g, tbb::flow::unlimited, [](std::shared_ptr<Image> img) -> std::shared_ptr<Image> {
+  tbb::flow::function_node<ImagePtr, tbb::flow::continue_msg> node_show(  // render the image on the terminal
+      graph,
+      tbb::flow::unlimited,
+      [rows, columns](ImagePtr img) { img->show(columns, rows); });
+
+  tbb::flow::function_node<ImagePtr, ImagePtr> node_scale(  // scale down the image to 0.5x0.5
+      graph,
+      tbb::flow::unlimited,
+      [](ImagePtr img) -> ImagePtr {
         return std::make_shared<Image>(scale(*img, img->width_ * 0.5, img->height_ * 0.5));
       });
 
-  tbb::flow::function_node<std::shared_ptr<Image>, std::shared_ptr<Image>> node_gray(
-      g, tbb::flow::unlimited, [](std::shared_ptr<Image> img) -> std::shared_ptr<Image> {
-        return std::make_shared<Image>(grayscale(*img));
+  tbb::flow::function_node<ImagePtr, ImagePtr> node_gray(  // generate a grayscale image
+      graph,
+      tbb::flow::unlimited,
+      [](ImagePtr img) -> ImagePtr { return std::make_shared<Image>(grayscale(*img)); });
+
+  tbb::flow::function_node<ImagePtr, ImagePtr> node_tint1(  // apply a purple-ish tint
+      graph,
+      tbb::flow::unlimited,
+      [](ImagePtr img) -> ImagePtr { return std::make_shared<Image>(tint(*img, 168, 56, 172)); });
+
+  tbb::flow::function_node<ImagePtr, ImagePtr> node_tint2(  // apply a green-ish tint
+      graph,
+      tbb::flow::unlimited,
+      [](ImagePtr img) -> ImagePtr { return std::make_shared<Image>(tint(*img, 100, 143, 47)); });
+
+  tbb::flow::function_node<ImagePtr, ImagePtr> node_tint3(  // apply a gold-ish tint
+      graph,
+      tbb::flow::unlimited,
+      [](ImagePtr img) -> ImagePtr { return std::make_shared<Image>(tint(*img, 255, 162, 36)); });
+
+  tbb::flow::join_node<ImageCmb, tbb::flow::queueing> node_join(graph);
+
+  tbb::flow::function_node<ImageCmb, ImagePtr> node_result(  // combine the images
+      graph,
+      tbb::flow::unlimited,
+      [](ImageCmb images) -> ImagePtr {
+        int width = std::get<0>(images)->width_;
+        int height = std::get<0>(images)->height_;
+        int channels = std::get<0>(images)->channels_;
+        Image out(width * 2, height * 2, channels);
+        write_to(*std::get<0>(images), out, 0, 0);
+        write_to(*std::get<1>(images), out, width, 0);
+        write_to(*std::get<2>(images), out, 0, height);
+        write_to(*std::get<3>(images), out, width, height);
+        return std::make_shared<Image>(std::move(out));
       });
 
-  tbb::flow::function_node<std::shared_ptr<Image>, std::shared_ptr<Image>> node_tint1(
-      g, tbb::flow::unlimited, [](std::shared_ptr<Image> img) -> std::shared_ptr<Image> {
-        return std::make_shared<Image>(tint(*img, 168, 56, 172));  // purple-ish
-      });
-
-  tbb::flow::function_node<std::shared_ptr<Image>, std::shared_ptr<Image>> node_tint2(
-      g, tbb::flow::unlimited, [](std::shared_ptr<Image> img) -> std::shared_ptr<Image> {
-        return std::make_shared<Image>(tint(*img, 100, 143, 47));  // green-ish
-      });
-
-  tbb::flow::function_node<std::shared_ptr<Image>, std::shared_ptr<Image>> node_tint3(
-      g, tbb::flow::unlimited, [](std::shared_ptr<Image> img) -> std::shared_ptr<Image> {
-        return std::make_shared<Image>(tint(*img, 255, 162, 36));  // gold-ish
-      });
-
-  tbb::flow::join_node<
-      std::tuple<std::shared_ptr<Image>, std::shared_ptr<Image>, std::shared_ptr<Image>, std::shared_ptr<Image>>,
-      tbb::flow::queueing>
-      node_join(g);
-
-  tbb::flow::function_node<
-      std::tuple<std::shared_ptr<Image>, std::shared_ptr<Image>, std::shared_ptr<Image>, std::shared_ptr<Image>>,
-      std::shared_ptr<Image>>
-      node_result(
-          g,
-          tbb::flow::unlimited,
-          [](std::tuple<std::shared_ptr<Image>, std::shared_ptr<Image>, std::shared_ptr<Image>, std::shared_ptr<Image>>
-                 images) -> std::shared_ptr<Image> {
-            int width = std::get<0>(images)->width_;
-            int height = std::get<0>(images)->height_;
-            int channels = std::get<0>(images)->channels_;
-            Image out(width * 2, height * 2, channels);
-            write_to(*std::get<0>(images), out, 0, 0);
-            write_to(*std::get<1>(images), out, width, 0);
-            write_to(*std::get<2>(images), out, 0, height);
-            write_to(*std::get<3>(images), out, width, height);
-            return std::make_shared<Image>(std::move(out));
-          });
-
-  tbb::flow::function_node<std::shared_ptr<Image>, tbb::flow::continue_msg> node_write(
-      g, tbb::flow::unlimited, [&counter](std::shared_ptr<Image> img) {
+  tbb::flow::function_node<ImagePtr, tbb::flow::continue_msg> node_write(  // write the image to a file
+      graph,
+      tbb::flow::unlimited,
+      [&counter](ImagePtr img) {
         std::string filename = fmt::format("out{:02d}.jpg", counter++);
         img->write(filename);
       });
@@ -479,7 +481,7 @@ int main(int argc, const char* argv[]) {
   }
 
   // wait for all operation to complete
-  g.wait_for_all();
+  graph.wait_for_all();
 
   return 0;
 }
