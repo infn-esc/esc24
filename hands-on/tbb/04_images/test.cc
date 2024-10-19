@@ -30,33 +30,20 @@ struct Image {
   int height_ = 0;
   int channels_ = 0;
 
-  Image() {
-  }
+  Image() {}
 
-  Image(std::string const& filename) {
-    open(filename);
-  }
+  Image(std::string const& filename) { open(filename); }
 
-  Image(int width, int height, int channels) :
-    width_(width),
-    height_(height),
-    channels_(channels)
-  {
+  Image(int width, int height, int channels) : width_(width), height_(height), channels_(channels) {
     size_t size = width_ * height_ * channels_;
     data_ = static_cast<unsigned char*>(stbi__malloc(size));
     std::memset(data_, 0x00, size);
   }
 
-  ~Image() {
-    close();
-  }
+  ~Image() { close(); }
 
   // copy constructor
-  Image(Image const& img) :
-    width_(img.width_),
-    height_(img.height_),
-    channels_(img.channels_)
-  {
+  Image(Image const& img) : width_(img.width_), height_(img.height_), channels_(img.channels_) {
     size_t size = width_ * height_ * channels_;
     data_ = static_cast<unsigned char*>(stbi__malloc(size));
     std::memcpy(data_, img.data_, size);
@@ -83,18 +70,13 @@ struct Image {
   }
 
   // move constructor
-  Image(Image && img) :
-    data_(img.data_),
-    width_(img.width_),
-    height_(img.height_),
-    channels_(img.channels_)
-  {
+  Image(Image&& img) : data_(img.data_), width_(img.width_), height_(img.height_), channels_(img.channels_) {
     // take owndership of the image data
     img.data_ = nullptr;
   }
 
   // move assignment
-  Image& operator=(Image && img) {
+  Image& operator=(Image&& img) {
     // avoid self-moves
     if (&img == this) {
       return *this;
@@ -118,9 +100,10 @@ struct Image {
   void open(std::string const& filename) {
     data_ = stbi_load(filename.c_str(), &width_, &height_, &channels_, 0);
     if (data_ == nullptr) {
-        throw std::runtime_error("Failed to load "s + filename);
+      throw std::runtime_error("Failed to load "s + filename);
     }
-    std::cout << "Loaded image with " << width_ << " x " << height_ << " pixels and " << channels_ << " channels from " << filename << '\n';
+    std::cout << "Loaded image with " << width_ << " x " << height_ << " pixels and " << channels_ << " channels from "
+              << filename << '\n';
   }
 
   void write(std::string const& filename) {
@@ -189,7 +172,6 @@ struct Image {
       std::cout << '\n';
     }
   }
-
 };
 
 bool verbose = false;
@@ -247,7 +229,10 @@ Image scale(Image const& src, int width, int height) {
       int p11 = (y1 * src.width_ + x1) * src.channels_;
 
       for (int c = 0; c < src.channels_; ++c) {
-        out.data_[p + c] = static_cast<unsigned char>(std::round((src.data_[p00 + c] * wx1 * wy1 + src.data_[p10 + c] * wx1 * wy0 + src.data_[p01 + c] * wx0 * wy1 + src.data_[p11 + c] * wx0 * wy0) / (dx * dy)));
+        out.data_[p + c] =
+            static_cast<unsigned char>(std::round((src.data_[p00 + c] * wx1 * wy1 + src.data_[p10 + c] * wx1 * wy0 +
+                                                   src.data_[p01 + c] * wx0 * wy1 + src.data_[p11 + c] * wx0 * wy0) /
+                                                  (dx * dy)));
       }
     }
   }
@@ -278,13 +263,13 @@ void write_to(Image const& src, Image& dst, int x, int y) {
 
   // find the valid range for the overlapping part of the images along the X and Y axes
   int src_x_from = std::max(0, -x);
-  int src_x_to   = std::min(src.width_, dst.width_ - x);
+  int src_x_to = std::min(src.width_, dst.width_ - x);
   int dst_x_from = std::max(0, x);
   //int dst_x_to   = std::min(src.width_ + x, dst.width_);
   int x_width = src_x_to - src_x_from;
 
   int src_y_from = std::max(0, -y);
-  int src_y_to   = std::min(src.height_, dst.height_ - y);
+  int src_y_to = std::min(src.height_, dst.height_ - y);
   int dst_y_from = std::max(0, y);
   //int dst_y_to   = std::min(src.height_ + y, dst.height_);
   int y_height = src_y_to - src_y_from;
@@ -304,7 +289,6 @@ void write_to(Image const& src, Image& dst, int x, int y) {
   }
 }
 
-
 // convert an image to grayscale
 Image grayscale(Image const& src) {
   // non-RGB images are not supported
@@ -317,13 +301,13 @@ Image grayscale(Image const& src) {
     for (int x = 0; x < dst.width_; ++x) {
       int p = (y * dst.width_ + x) * dst.channels_;
       int r = dst.data_[p];
-      int g = dst.data_[p+1];
-      int b = dst.data_[p+2];
+      int g = dst.data_[p + 1];
+      int b = dst.data_[p + 2];
       // NTSC values for RGB to grayscale conversion
       int y = (299 * r + 587 * g + 114 * b) / 1000;
       dst.data_[p] = y;
-      dst.data_[p+1] = y;
-      dst.data_[p+2] = y;
+      dst.data_[p + 1] = y;
+      dst.data_[p + 2] = y;
     }
   }
 
@@ -348,11 +332,11 @@ Image tint(Image const& src, int r, int g, int b) {
     for (int x = 0; x < dst.width_; ++x) {
       int p = (y * dst.width_ + x) * dst.channels_;
       int r0 = dst.data_[p];
-      int g0 = dst.data_[p+1];
-      int b0 = dst.data_[p+2];
+      int g0 = dst.data_[p + 1];
+      int b0 = dst.data_[p + 2];
       dst.data_[p] = r0 * r / 255;
-      dst.data_[p+1] = g0 * g / 255;
-      dst.data_[p+2] = b0 * b / 255;
+      dst.data_[p + 1] = g0 * g / 255;
+      dst.data_[p + 2] = b0 * b / 255;
     }
   }
 
@@ -366,58 +350,58 @@ Image tint(Image const& src, int r, int g, int b) {
 }
 
 int main(int argc, const char* argv[]) {
-    const char* verbose_env = std::getenv("VERBOSE");
-    if (verbose_env != nullptr and std::strlen(verbose_env) != 0) {
-      verbose = true;
-    }
+  const char* verbose_env = std::getenv("VERBOSE");
+  if (verbose_env != nullptr and std::strlen(verbose_env) != 0) {
+    verbose = true;
+  }
 
-    std::vector<std::string> files;
-    if (argc == 1) {
-      // no arguments, use a single default image
-      files = { "image.png"s };
-    } else {
-      files.reserve(argc - 1);
-      for (int i = 1; i < argc; ++i) {
-        files.emplace_back(argv[i]);
-      }
+  std::vector<std::string> files;
+  if (argc == 1) {
+    // no arguments, use a single default image
+    files = {"image.png"s};
+  } else {
+    files.reserve(argc - 1);
+    for (int i = 1; i < argc; ++i) {
+      files.emplace_back(argv[i]);
     }
+  }
 
-    int rows = 80;
-    int columns = 80;
+  int rows = 80;
+  int columns = 80;
 #if defined(__linux__) && defined(TIOCGWINSZ)
-    if (isatty(STDOUT_FILENO)) {
-      struct winsize w;
-      ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-      if (w.ws_row > 1 and w.ws_col > 1) {
-        rows = w.ws_row - 1;
-        columns = w.ws_col - 1;
-      }
+  if (isatty(STDOUT_FILENO)) {
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    if (w.ws_row > 1 and w.ws_col > 1) {
+      rows = w.ws_row - 1;
+      columns = w.ws_col - 1;
     }
+  }
 #endif
 
-    std::vector<Image> images;
-    images.resize(files.size());
-    for (unsigned int i = 0; i < files.size(); ++i) {
-      auto& img = images[i];
-      img.open(files[i]);
-      img.show(columns, rows);
+  std::vector<Image> images;
+  images.resize(files.size());
+  for (unsigned int i = 0; i < files.size(); ++i) {
+    auto& img = images[i];
+    img.open(files[i]);
+    img.show(columns, rows);
 
-      Image small = scale(img, img.width_ * 0.5, img.height_ * 0.5);
-      Image gray = grayscale(small);
-      Image tone1 = tint(gray, 168, 56, 172);   // purple-ish
-      Image tone2 = tint(gray, 100, 143, 47);   // green-ish
-      Image tone3 = tint(gray, 255, 162, 36);   // gold-ish
+    Image small = scale(img, img.width_ * 0.5, img.height_ * 0.5);
+    Image gray = grayscale(small);
+    Image tone1 = tint(gray, 168, 56, 172);  // purple-ish
+    Image tone2 = tint(gray, 100, 143, 47);  // green-ish
+    Image tone3 = tint(gray, 255, 162, 36);  // gold-ish
 
-      Image out(img.width_, img.height_, img.channels_);
-      write_to(tone1, out, 0, 0);
-      write_to(tone2, out, img.width_ * 0.5, 0);
-      write_to(tone3, out, 0, img.height_ * 0.5);
-      write_to(gray, out, img.width_ * 0.5, img.height_ * 0.5);
+    Image out(img.width_, img.height_, img.channels_);
+    write_to(tone1, out, 0, 0);
+    write_to(tone2, out, img.width_ * 0.5, 0);
+    write_to(tone3, out, 0, img.height_ * 0.5);
+    write_to(gray, out, img.width_ * 0.5, img.height_ * 0.5);
 
-      std::cout << '\n';
-      out.show(columns, rows);
-      out.write(fmt::format("out{:02d}.jpg", i));
-    }
+    std::cout << '\n';
+    out.show(columns, rows);
+    out.write(fmt::format("out{:02d}.jpg", i));
+  }
 
-    return 0;
+  return 0;
 }
