@@ -3,9 +3,10 @@
 //#include <format>
 #include <iomanip>
 #include <iostream>
-#include <numbers>
 #include <random>
 #include <vector>
+
+#include <tbb/tbb.h>
 
 template <typename T>
 void axpy(T a, T x, T y, T& z) {
@@ -21,10 +22,27 @@ void sequential_axpy(T a, std::vector<T> const& x, std::vector<T> const& y, std:
 }
 
 template <typename T>
+void parallel_axpy(T a, std::vector<T> const& x, std::vector<T> const& y, std::vector<T>& z) {
+  std::size_t size = x.size();
+  tbb::parallel_for<std::size_t>(0, size, 1, [&](std::size_t i) { axpy(a, x[i], y[i], z[i]); });
+}
+
+template <typename T>
 void measure_sequential(T a, std::vector<T> const& x, std::vector<T> const& y) {
   std::vector<T> z(x.size(), 0);
   auto start = std::chrono::steady_clock::now();
   sequential_axpy(a, x, y, z);
+  auto finish = std::chrono::steady_clock::now();
+  float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
+  //std::cout << std::format("{:6.1f}", ms) << " ms\n";
+  std::cout << std::fixed << std::setprecision(1) << std::setw(6) << ms << " ms\n";
+}
+
+template <typename T>
+void measure_parallel(T a, std::vector<T> const& x, std::vector<T> const& y) {
+  std::vector<T> z(x.size(), 0);
+  auto start = std::chrono::steady_clock::now();
+  parallel_axpy(a, x, y, z);
   auto finish = std::chrono::steady_clock::now();
   float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
   //std::cout << std::format("{:6.1f}", ms) << " ms\n";
@@ -48,8 +66,8 @@ int main() {
     measure_sequential(a, x, y);
   std::cout << '\n';
 
-  // TODO
-  //   - write a parallel version of sequential_axpy using tbb::parallel_for
-  //   - measure its performance compared to sequential_axpy
-
+  std::cout << "parallel axpy\n";
+  for (size_t i = 0; i < times; ++i)
+    measure_parallel(a, x, y);
+  std::cout << '\n';
 }

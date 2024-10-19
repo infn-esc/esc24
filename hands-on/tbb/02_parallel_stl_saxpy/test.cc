@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
-#include <execution>
 //#include <format>
 #include <iomanip>
 #include <iostream>
@@ -15,8 +14,8 @@ void axpy(T a, T x, T y, T& z) {
 }
 
 template <typename T>
-void parallel_axpy(auto policy, T a, std::vector<T> const& x, std::vector<T> const& y, std::vector<T>& z) {
-  std::transform(policy, x.begin(), x.end(), y.begin(), z.begin(), [a](T x, T y) -> T {
+void sequential_axpy(T a, std::vector<T> const& x, std::vector<T> const& y, std::vector<T>& z) {
+  std::transform(x.begin(), x.end(), y.begin(), z.begin(), [a](T x, T y) -> T {
     T z;
     axpy(a, x, y, z);
     return z;
@@ -24,10 +23,10 @@ void parallel_axpy(auto policy, T a, std::vector<T> const& x, std::vector<T> con
 }
 
 template <typename T>
-void measure(auto policy, T a, std::vector<T> const& x, std::vector<T> const& y) {
+void measure(T a, std::vector<T> const& x, std::vector<T> const& y) {
   std::vector<T> z(x.size(), 0);
   auto start = std::chrono::steady_clock::now();
-  parallel_axpy(policy, a, x, y, z);
+  sequential_axpy(a, x, y, z);
   auto finish = std::chrono::steady_clock::now();
   float ms = std::chrono::duration_cast<std::chrono::duration<float>>(finish - start).count() * 1000.f;
   //std::cout << std::format("{:6.1f}", ms) << " ms\n";
@@ -46,27 +45,12 @@ int main() {
   std::vector<float> y(size);
   std::ranges::generate(y, [&] { return dis(gen); });
 
-  std::cout << "std::execution::seq\n";
+  std::cout << "sequential saxpy\n";
   for (size_t i = 0; i < times; ++i)
-    measure(std::execution::seq, a, x, y);
+    measure(a, x, y);
   std::cout << '\n';
 
-  /*
-    std::cout << "std::execution::unseq\n"; 
-    for (size_t i = 0; i < times; ++i)
-        measure(std::execution::unseq, a, x, y);
-    std::cout << '\n';
-    */
-
-  std::cout << "std::execution::par\n";
-  for (size_t i = 0; i < times; ++i)
-    measure(std::execution::par, a, x, y);
-  std::cout << '\n';
-
-  /*
-    std::cout << "std::execution::par_unseq\n"; 
-    for (size_t i = 0; i < times; ++i)
-        measure(std::execution::par_unseq, a, x, y);
-    std::cout << '\n';
-    */
+  // TODO
+  //   - change the sequential loop to use std::execution::seq
+  //   - try the other execution policies (par, unseq, par_unseq)
 }
