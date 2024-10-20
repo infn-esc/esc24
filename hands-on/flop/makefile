@@ -3,6 +3,10 @@
 #     make          ... to build the programs
 #     make test     ... to run the default test case
 #
+#  NOTE:
+#     summationCpp won't build unless the C utilityFunctions is
+#     compiled with the C++ compiler. 
+#
 
 CC          = gcc-14
 CPP         = g++-14
@@ -13,9 +17,10 @@ OPTFLAGS    = -O0 -fopenmp -Wall -frounding-math
 LIBS        = -lm
 CFLAGS	  = $(OPTFLAGS)
 
-EXES = roundingC roundingCpp  summation
+EXES = roundingC roundingCpp  summation  
 
-SUMOBJS = summation.o UtilityFunctions.o
+SUMOBJS    = summation.o    UtilityFunctions.o
+SUMOBJSCpp = summationCpp.o UtilityFunctions.o
 
 all: $(EXES)
 
@@ -28,10 +33,16 @@ roundingCpp: roundingCpp.o
 summation: $(SUMOBJS)
 	$(CLINKER) $(OPTFLAGS) -o summation $(SUMOBJS)  $(LIBS)
 
+summationCpp: summationCpp.o
+	$(CPPLINKER) $(OPTFLAGS) -o summationCpp  \
+		summationCpp.o UtilityFunctions.c $(LIBS)
+
 test: $(EXES)
 	./roundingC
 	./roundingCpp
 	./summation
+	./summationCpp
+
 
 clean:
 	rm -rf $(EXES) *.o
@@ -43,5 +54,5 @@ clean:
 	$(CC) $(CFLAGS) -c $<
 
 .cc.o:
-	$(CC) $(CFLAGS) -c $<
+	$(CPP) $(CFLAGS) -c $<
 
