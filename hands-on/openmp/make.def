@@ -3,14 +3,14 @@
 
 # gcc-13 for Linux or Apple (note on Apple .. the gcc you get by default 
 # connects to their clang compiler which does not include OpenMP
-#CC          = gcc-13
+CC          = gcc-14
 
 # Intel Compiler
 #CC          = icc
 
 # gcc for Linux systems.  Remember, gcc on Apple aliases their Clang compiler
 # in Xcode for which they deliberatly disabled OpenMP
-CC          = gcc
+#CC          = gcc
 
 # These definitions should work on any system
 CLINKER     = $(CC)

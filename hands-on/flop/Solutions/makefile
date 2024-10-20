@@ -4,12 +4,12 @@
 #     make test     ... to run the default test case
 #
 
-CC          = gcc-13
-CPP         = g++-13
+CC          = gcc-14
+CPP         = g++-14
 CLINKER     = $(CC)
 CPPLINKER   = $(CPP)
 #OPTFLAGS   = -std=c11 -fopenmp -O3
-OPTFLAGS    = -O0 -fopenmp -Wall -frounding-math
+OPTFLAGS    = -O3 -fopenmp -Wall -frounding-math
 LIBS        = -lm
 CFLAGS	  = $(OPTFLAGS)
 

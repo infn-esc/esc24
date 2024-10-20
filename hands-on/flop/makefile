@@ -4,8 +4,8 @@
 #     make test     ... to run the default test case
 #
 
-CC          = gcc-13
-CPP         = g++-13
+CC          = gcc-14
+CPP         = g++-14
 CLINKER     = $(CC)
 CPPLINKER   = $(CPP)
 #OPTFLAGS   = -std=c11 -fopenmp -O3
