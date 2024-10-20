@@ -68,6 +68,13 @@ menu:
     - name: allocator
     - name: asan
       label: Address Sanitizer
+  - name: pybind
+    label: Python bindings
+    items:
+    - name: cpp_to_py
+      label: Using C++ in Python
+    - name: py_to_cpp
+      label: Using Python in C++
 
 # Exclude from processing.
 # The following items will not be processed, by default.
