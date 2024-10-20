@@ -17,7 +17,7 @@ OPTFLAGS    = -O0 -fopenmp -Wall -frounding-math
 LIBS        = -lm
 CFLAGS	  = $(OPTFLAGS)
 
-EXES = roundingC roundingCpp  summation  
+EXES = roundingC roundingCpp  summation  summationCpp
 
 SUMOBJS    = summation.o    UtilityFunctions.o
 SUMOBJSCpp = summationCpp.o UtilityFunctions.o
