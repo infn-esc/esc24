@@ -54,6 +54,8 @@ menu:
     items:
     - name: cuda
       label: CUDA
+    - name: portability
+      label: Portability
   #   items:
   #   - name: auto_vectorization
   #     label: Automatic vectorization
