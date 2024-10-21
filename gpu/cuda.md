@@ -122,9 +122,9 @@ By completing this exercise you will learn how to configure and launch a simple 
 M is a matrix of NxN integers.
 
 1. Set N=4
-2. Write a kernel that sets each element of the matrix to its linear index (e.g. M[2,3] = 2*N + 3), by making use of two-dimensional grid and blocks. (Two-dimensional means using the x and y coordinates).
+2. Write a kernel that sets each element of the matrix to its linearized index (e.g. M[2,3] = 2*N + 3), by making use of two-dimensional grid and blocks. (Two-dimensional means using the x and y coordinates).
 3. Copy the result to the host and check that it is correct.
-4. Try with a rectangular matrix 19x67. 
+4. Try with a rectangular matrix 19x67.
 
 Hint: check the kernel launch parameters.
 Hint: fix the number of threads per block in each dimension and find the number of blocks needed to cover the full matrix. Pay attention not to write or read out of the matrix boundaries.
@@ -144,16 +144,11 @@ Given an array `a[N]`, the reduction sum `Sum` of a is the sum of all its elemen
 `b[i] = a[0] + a[1] + … + a[i]`. Implement a cumulative sum kernel assuming that the size of the input array is multiple of the block size.
 
 
-### Challenge: Histogram
+### Parallel Challenge: The circle of life
 
-The purpose of this lab is to implement an efficient histogramming algorithm for an input array of integers within a given range.
+The purpose of this lab is to optimize and accelerate a prey-predator simulation using the parallel paradigms you have learned. The simulation is based on Conway's Game of Life with a twist: the cells are either prey or predators. The prey reproduce and move, while the predators eat the prey and reproduce. 
+![Simulation](simulation.gif)
 
-Each integer will map into a single bin, so the values will range from 0 to (NUM_BINS - 1).
-
-The histogram bins will use unsigned 32-bit counters that must be saturated at 127 (i.e. no roll back to 0 allowed).
-
-The input length can be assumed to be less than 2ˆ32. `NUM_BINS` is fixed at 4096 for this lab.
-This can be split into two kernels: one that does a histogram without saturation, and a final kernel that cleans up the bins if they are too large. These two stages can also be combined into a single kernel.
 
 ### Atomics <a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomic-functions" target="_blank">[1]</a>
 
