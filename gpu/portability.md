@@ -1,4 +1,5 @@
-Mapping CUDA Concepts to Other Models
+# GPU Portability
+#### Mapping CUDA Concepts to Other Models
 
 - Thread Organization
   - CUDA: Grids, blocks, and threads.
