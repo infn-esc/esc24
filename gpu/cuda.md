@@ -147,7 +147,8 @@ Given an array `a[N]`, the reduction sum `Sum` of a is the sum of all its elemen
 ### Parallel Challenge: The circle of life
 
 The purpose of this lab is to optimize and accelerate a prey-predator simulation using the parallel paradigms you have learned. The simulation is based on Conway's Game of Life with a twist: the cells are either prey or predators. The prey reproduce and move, while the predators eat the prey and reproduce. 
-![Simulation](simulation.gif)
+
+![Simulation](simulation.gif){ width=600px }
 
 
 ### Atomics <a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#atomic-functions" target="_blank">[1]</a>
