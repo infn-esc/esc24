@@ -10,7 +10,7 @@
 // interference in false sharing)
 // constexpr size_t CACHE_ALIGNMENT =
 // std::hardware_destructive_interference_size;
-constexpr size_t CACHE_ALIGNMENT = 64;
+constexpr std::size_t CACHE_ALIGNMENT = std::hardware_destructive_interference_size;
 
 // I want to use a smart pointer together with the operatore "aligned" new --> I
 // have to provide a custom deleter to the unique pointer, so let's create it
