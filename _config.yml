@@ -49,7 +49,11 @@ menu:
   #   items:
   #   - name: pi
   #     label: Vectorize computation of pi
-  # - name: parallelism
+  - name: gpu
+    label: GPU Programming
+    items:
+    - name: cuda
+      label: CUDA
   #   items:
   #   - name: auto_vectorization
   #     label: Automatic vectorization
