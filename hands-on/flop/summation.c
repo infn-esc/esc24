@@ -34,7 +34,8 @@ int main ()
 
    FillSequence(N, seq, &True_sum); // populate seq with N random values > 0
 
-// Add code here to sum the elements of the array of length N, seq
+   #pragma omp parallel for reduction(+:sum)
+   for(int i=0; i<N; i++)sum += seq[i];
 
    printf(" Sum = %f, Estimated sum = %f\n",sum,True_sum);
 

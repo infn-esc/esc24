@@ -3,6 +3,10 @@
 #     make          ... to build the programs
 #     make test     ... to run the default test case
 #
+#  NOTE:
+#     summationCpp won't build unless the C utilityFunctions is
+#     compiled with the C++ compiler. 
+#
 
 CC          = gcc-14
 CPP         = g++-14
@@ -14,9 +18,9 @@ LIBS        = -lm
 CFLAGS	  = $(OPTFLAGS)
 
 EXES = AssocDistCases CounterAccum MachEpsilon expSumSeries quadraticSolve \
-       refactorFuncCancelation sumHarmonicForwardAndBack  summation
+       refactorFuncCancelation sumHarmonicForwardAndBack summation summationCpp
 
-SUMOBJS = summationWithKahan.o UtilityFunctions.o
+SUMOBJS    = summationWithKahan.o UtilityFunctions.o
 
 all: $(EXES)
 
@@ -44,15 +48,23 @@ sumHarmonicForwardAndBack: sumHarmonicForwardAndBack.o
 summation: $(SUMOBJS) UtilityFunctions.h
 	$(CLINKER) $(OPTFLAGS) -o summation $(SUMOBJS)  $(LIBS)
 
+summationCpp: summationCpp.o
+	$(CPPLINKER) $(OPTFLAGS) -o summationCpp $(SUMOBJSCpp)  $(LIBS)
+
+summationCpp: summationCpp.o
+	$(CPPLINKER) $(OPTFLAGS) -o summationCpp  \
+		summationCpp.o UtilityFunctions.c $(LIBS)
+
 test: $(EXES)
 	./AssocDistCases
 	./CounterAccum
-	./MachEpsilon
-	./quadraticSolve
 	./expSumSeries
 	./refactorFuncCancelation
 	./sumHarmonicForwardAndBack
+	./quadraticSolve
 	./summation
+	./summationCpp
+	./MachEpsilon
 
 clean:
 	rm -rf $(EXES) *.o
