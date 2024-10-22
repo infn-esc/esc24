@@ -1,4 +1,6 @@
-#include <CL/sycl.hpp>
+// icpx -fsycl -std=c++20 -O3 -Wall  stencil_sycl.cpp -o stencil
+
+#include <sycl/sycl.hpp>
 #include <iostream>
 
 #define BLOCK_SIZE 256
@@ -11,7 +13,7 @@ void stencil_1d(sycl::queue &q, const int *in, int *out, int n) {
     sycl::range<1> global_range(n);
     sycl::range<1> local_range(BLOCK_SIZE);
 
-    sycl::accessor<int, 1, sycl::access::mode::read_write, sycl::access::target::local>
+    sycl::local_accessor<int, 1>
         temp_acc(BLOCK_SIZE + 2 * RADIUS, h);
 
     h.parallel_for<class StencilKernel>(sycl::nd_range<1>(global_range, local_range), [=](sycl::nd_item<1> item) {
@@ -44,14 +46,15 @@ int main() {
   int n = 1024;
   int size = n * sizeof(int);
 
-  int *h_in = sycl::malloc_host<int>(n, sycl::default_selector());
-  int *h_out = sycl::malloc_host<int>(n, sycl::default_selector());
+  sycl::device dev{sycl::gpu_selector_v};
+  sycl::queue q(dev);
+
+  int *h_in = sycl::malloc_host<int>(n, q);
+  int *h_out = sycl::malloc_host<int>(n, q);
 
   for (int i = 0; i < n; i++) {
     h_in[i] = i;
   }
-
-  sycl::queue q(sycl::default_selector{});
 
   // Allocate device memory
   int *d_in = sycl::malloc_device<int>(n, q);
