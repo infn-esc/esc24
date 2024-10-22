@@ -18,7 +18,8 @@ LIBS        = -lm
 CFLAGS	  = $(OPTFLAGS)
 
 EXES = AssocDistCases CounterAccum MachEpsilon expSumSeries quadraticSolve \
-       refactorFuncCancelation sumHarmonicForwardAndBack summation summationCpp
+       refactorFuncCancelation sumHarmonicForwardAndBack summation \
+       summationCpp summationCppKahan
 
 SUMOBJS    = summationWithKahan.o UtilityFunctions.o
 
@@ -55,6 +56,10 @@ summationCpp: summationCpp.o
 	$(CPPLINKER) $(OPTFLAGS) -o summationCpp  \
 		summationCpp.o UtilityFunctions.c $(LIBS)
 
+summationCppKahan: summationCppKahan.o
+	$(CPPLINKER) $(OPTFLAGS) -o summationCppKahan  \
+		summationCppKahan.o UtilityFunctions.c $(LIBS)
+
 test: $(EXES)
 	./AssocDistCases
 	./CounterAccum
@@ -64,6 +69,7 @@ test: $(EXES)
 	./quadraticSolve
 	./summation
 	./summationCpp
+	./summationCppKahan
 	./MachEpsilon
 
 clean:
