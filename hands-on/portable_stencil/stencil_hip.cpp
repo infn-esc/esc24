@@ -1,6 +1,22 @@
 #include <hip/hip_runtime.h>
 #include <iostream>
 
+constexpr int error_exit_code = -1;
+
+/// \brief Checks if the provided error code is \p hipSuccess and if not,
+/// prints an error message to the standard error output and terminates the program
+/// with an error code.
+#define HIP_CHECK(condition)                                                                \
+    {                                                                                       \
+        const hipError_t error = condition;                                                 \
+        if(error != hipSuccess)                                                             \
+        {                                                                                   \
+            std::cerr << "An error encountered: \"" << hipGetErrorString(error) << "\" at " \
+                      << __FILE__ << ':' << __LINE__ << std::endl;                          \
+            std::exit(error_exit_code);                                                     \
+        }                                                                                   \
+    }
+
 #define BLOCK_SIZE 256
 #define RADIUS 3
 
@@ -38,20 +54,20 @@ int main() {
   hipStream_t stream;
 
   // Allocating pinned (page-locked) host memory
-  hipHostMalloc(&h_in, size);
-  hipHostMalloc(&h_out, size);
+  HIP_CHECK(hipHostMalloc(&h_in, size));
+  HIP_CHECK(hipHostMalloc(&h_out, size));
 
   for (int i = 0; i < n; i++) {
     h_in[i] = i;
   }
 
   int *d_in, *d_out;
-  hipStreamCreate(&stream);
-  hipMallocAsync(&d_in, size, stream);
-  hipMallocAsync(&d_out, size, stream);
+  HIP_CHECK(hipStreamCreate(&stream));
+  HIP_CHECK(hipMallocAsync(&d_in, size, stream));
+  HIP_CHECK(hipMallocAsync(&d_out, size, stream));
 
   // Asynchronous memory copy to device
-  hipMemcpyAsync(d_in, h_in, size, hipMemcpyHostToDevice, stream);
+  HIP_CHECK(hipMemcpyAsync(d_in, h_in, size, hipMemcpyHostToDevice, stream));
 
   int blockSize = BLOCK_SIZE;
   int gridSize = (n + blockSize - 1) / blockSize;
@@ -60,10 +76,10 @@ int main() {
   hipLaunchKernelGGL(stencil_1d, dim3(gridSize), dim3(blockSize), 0, stream, d_in, d_out, n);
 
   // Asynchronous memory copy back to host
-  hipMemcpyAsync(h_out, d_out, size, hipMemcpyDeviceToHost, stream);
+  HIP_CHECK(hipMemcpyAsync(h_out, d_out, size, hipMemcpyDeviceToHost, stream));
 
   // Wait for stream to complete
-  hipStreamSynchronize(stream);
+  HIP_CHECK(hipStreamSynchronize(stream));
 
   // Verify the result
   for (int i = 0; i < n; i++) {
@@ -71,12 +87,12 @@ int main() {
   }
 
   // Freeing pinned host memory
-  hipHostFree(h_in);
-  hipHostFree(h_out);
+  HIP_CHECK(hipHostFree(h_in));
+  HIP_CHECK(hipHostFree(h_out));
 
-  hipFreeAsync(d_in, stream);
-  hipFreeAsync(d_out, stream);
-  hipStreamDestroy(stream);
+  HIP_CHECK(hipFreeAsync(d_in, stream));
+  HIP_CHECK(hipFreeAsync(d_out, stream));
+  HIP_CHECK(hipStreamDestroy(stream));
 
   return 0;
 }
