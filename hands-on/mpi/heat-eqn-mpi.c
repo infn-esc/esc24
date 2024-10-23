@@ -58,7 +58,8 @@ int main(int argc, char *argv[]) {
     double dx = 1.0/NX;
     double dt = 0.5*dx*dx;
 
-    int numProcs, myID, numPoints;
+    int numProcs, myID, leftNbr, rightNbr;
+    int numPoints;
     MPI_Status status; 
 
     /* MPI initialization */
@@ -70,11 +71,10 @@ int main(int argc, char *argv[]) {
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
 
+    /* initialization of other variables */
+    leftNbr = myID - 1; // ID of left "neighbor" process
+    rightNbr = myID + 1; // ID of right "neighbor" process
     numPoints = (NX / numProcs);
-
-    /* setup communication partners for each rank */
-    int leftNbr   = (myID == 0)            ? MPI_PROC_NULL : myID - 1;
-    int rightNbr  = (myID == (numProcs-1)) ? MPI_PROC_NULL : myID + 1;
 
     /* uk, ukp1 include a "ghost cell" at each end */
     uk = malloc(sizeof(double) * (numPoints+2));
@@ -85,10 +85,14 @@ int main(int argc, char *argv[]) {
     for (int k = 0; k < NSTEPS; ++k) {
 
         /* exchange boundary information */
-        MPI_Send(&uk[1], 1, MPI_DOUBLE, leftNbr, 0, MPI_COMM_WORLD);
-        MPI_Send(&uk[numPoints], 1, MPI_DOUBLE, rightNbr, 0, MPI_COMM_WORLD);
-        MPI_Recv(&uk[0], 1, MPI_DOUBLE, leftNbr, 0, MPI_COMM_WORLD, &status);
-        MPI_Recv(&uk[numPoints+1],1, MPI_DOUBLE, rightNbr, 0, MPI_COMM_WORLD,
+        if (myID != 0) 
+            MPI_Send(&uk[1], 1, MPI_DOUBLE, leftNbr, 0, MPI_COMM_WORLD);
+        if (myID != numProcs-1)
+            MPI_Send(&uk[numPoints], 1, MPI_DOUBLE, rightNbr, 0, MPI_COMM_WORLD);
+        if (myID != 0)
+            MPI_Recv(&uk[0], 1, MPI_DOUBLE, leftNbr, 0, MPI_COMM_WORLD, &status);
+        if (myID != numProcs-1)
+            MPI_Recv(&uk[numPoints+1],1, MPI_DOUBLE, rightNbr, 0, MPI_COMM_WORLD,
                     &status);
 
         /* compute new values for interior points */
