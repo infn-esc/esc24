@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <iostream>
 #include <stdexcept>
+#include <syncstream>
 #include <vector>
 
 #ifdef __linux__
@@ -100,11 +101,13 @@ struct Image {
   }
 
   void open(std::string const& filename) {
+    std::osyncstream out(std::cout);
+
     data_ = stbi_load(filename.c_str(), &width_, &height_, &channels_, 0);
     if (data_ == nullptr) {
       throw std::runtime_error("Failed to load "s + filename);
     }
-    std::cout << "Loaded image with " << width_ << " x " << height_ << " pixels and " << channels_ << " channels from "
+    out << "Loaded image with " << width_ << " x " << height_ << " pixels and " << channels_ << " channels from "
               << filename << '\n';
   }
 
@@ -150,6 +153,8 @@ struct Image {
       height = max_height;
     }
 
+    std::osyncstream out(std::cout);
+
     // two blocks per line
     for (int j = 0; j < height; j += 2) {
       int y1 = j * height_ / height;
@@ -169,10 +174,12 @@ struct Image {
           b = data_[p + 2];
           style |= fmt::bg(fmt::rgb(r, g, b));
         }
-        std::cout << fmt::format(style, "▀");
+        out << fmt::format(style, "▀");
       }
-      std::cout << '\n';
+      out << '\n';
     }
+
+    // out is streamed to std::cout and flushed
   }
 };
 
