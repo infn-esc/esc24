@@ -22,6 +22,9 @@ struct is_associative : std::false_type {};
 template<typename C>
 struct is_associative<C, std::void_t<typename C::key_type>> : std::true_type {};
 
+template<typename C>
+constexpr auto is_associative_v = is_associative<C>::value;
+
 template<typename Container>
 Duration fill(Container& cont, int N)
 {
