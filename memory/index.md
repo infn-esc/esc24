@@ -1,5 +1,5 @@
 ---
-title: Efficient C++ programming
+title: Efficient memory management
 layout: main
 section: memory 
 ---
