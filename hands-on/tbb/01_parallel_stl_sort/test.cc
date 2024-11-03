@@ -24,19 +24,6 @@ with this program. If not, see <https://www.gnu.org/licenses/>.
 #include <random>
 #include <vector>
 
-bool is_sorted(std::vector<std::uint64_t> const& v) {
-  if (v.empty()) {
-    return true;
-  }
-
-  for (size_t i = 1; i < v.size(); ++i) {
-    if (v[i] < v[i - 1])
-      return false;
-  }
-
-  return true;
-}
-
 void measure(bool verbose, std::vector<std::uint64_t> v) {
   const auto start = std::chrono::steady_clock::now();
   std::sort(v.begin(), v.end());
@@ -44,7 +31,7 @@ void measure(bool verbose, std::vector<std::uint64_t> v) {
   if (verbose) {
     std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(finish - start).count() << "ms\n";
   }
-  assert(is_sorted(v));
+  assert(std::ranges::is_sorted(v));
 };
 
 void repeat(std::vector<std::uint64_t> const& v, size_t times, size_t skip = 0) {
